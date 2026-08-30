@@ -1,0 +1,9 @@
+.dart_tool/
+build/
+coverage/
+pubspec.lock
+pubspec_overrides.yaml
+example/pubspec_overrides.yaml
+example/.metadata
+example/ios/
+example/macos/

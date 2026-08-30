@@ -1,0 +1,22 @@
+name: command_chain_timeline_example
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  command_chain: ^0.1.0
+  command_chain_logger: ^0.1.0
+  command_chain_timeline:
+    path: ..
+  file_saver: ^0.4.0
+  file_selector: ^1.1.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
