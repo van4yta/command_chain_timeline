@@ -1,6 +1,6 @@
 name: command_chain_timeline
 description: A Flutter timeline for viewing exported command_chain log snapshots.
-version: 0.1.0
+version: 0.2.0
 repository: https://github.com/van4yta/command_chain_timeline
 
 environment:

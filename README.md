@@ -68,6 +68,10 @@ CommandChainTimeline(snapshot: snapshot);
   subscribe to a live logger. Pass a new snapshot when the data changes, for
   example through `setState` or your state manager.
 
+The supported public API consists only of `CommandChainTimeline` and
+`CommandChainTimelineLocale`. Canvas, painter, state, selection, and details
+panel types are implementation details.
+
 ## Roadmap
 
 - Design a dedicated mobile visualization and interaction model. The current

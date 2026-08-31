@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'command_chain_timeline_localization.dart';
 
-const double commandTimelineViewportSegmentExtent = 320;
+const double _commandTimelineViewportSegmentExtent = 320;
 
 class CommandChainTimeline extends StatefulWidget {
   final CommandLogSnapshot snapshot;
@@ -22,10 +22,10 @@ class CommandChainTimeline extends StatefulWidget {
   });
 
   @override
-  State<CommandChainTimeline> createState() => CommandChainTimelineState();
+  State<CommandChainTimeline> createState() => _CommandChainTimelineState();
 }
 
-class CommandChainTimelineState extends State<CommandChainTimeline> {
+class _CommandChainTimelineState extends State<CommandChainTimeline> {
   final ScrollController axisHorizontalController = ScrollController();
   final ScrollController timelineHorizontalController = ScrollController();
   final ScrollController labelsVerticalController = ScrollController();
@@ -76,7 +76,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
       );
       final segment =
           (timelineHorizontalController.positions.last.pixels /
-                  commandTimelineViewportSegmentExtent)
+                  _commandTimelineViewportSegmentExtent)
               .floor();
       if (horizontalViewportSegment.value != segment) {
         horizontalViewportSegment.value = segment;
@@ -98,7 +98,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
       );
       final segment =
           (labelsVerticalController.positions.last.pixels /
-                  commandTimelineViewportSegmentExtent)
+                  _commandTimelineViewportSegmentExtent)
               .floor();
       if (verticalViewportSegment.value != segment) {
         verticalViewportSegment.value = segment;
@@ -120,7 +120,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
       );
       final segment =
           (timelineVerticalController.positions.last.pixels /
-                  commandTimelineViewportSegmentExtent)
+                  _commandTimelineViewportSegmentExtent)
               .floor();
       if (verticalViewportSegment.value != segment) {
         verticalViewportSegment.value = segment;
@@ -167,7 +167,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
     final now = snapshot.generatedAt;
     final chains = [...snapshot.chains]
       ..sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
-    final chainsByExecutor = <String, List<ChainLogEntry>>{};
+    final chainsByExecutor = <String, List<CommandChainReport>>{};
     for (final chain in chains) {
       chainsByExecutor.putIfAbsent(chain.executorId, () => []).add(chain);
     }
@@ -181,7 +181,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
             String executorId,
             String executorName,
             String? instanceName,
-            List<({ChainLogEntry chain, int lane})> placements,
+            List<({CommandChainReport chain, int lane})> placements,
             int laneCount,
             double top,
             double height,
@@ -192,7 +192,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
       final executorChains = [...entry.value]
         ..sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
       final laneEnds = <DateTime>[];
-      final placements = <({ChainLogEntry chain, int lane})>[];
+      final placements = <({CommandChainReport chain, int lane})>[];
       for (final chain in executorChains) {
         final chainEnd = chain.endTime;
         int lane = -1;
@@ -241,8 +241,8 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
       globalEnd.difference(globalStart).inMilliseconds,
     );
 
-    ChainLogEntry? selectedChain;
-    CommandLogEntry? selectedCommand;
+    CommandChainReport? selectedChain;
+    CommandReport? selectedCommand;
     for (final chain in snapshot.chains) {
       if (chain.chainId == selectedChainId) selectedChain = chain;
       for (final command in chain.commands) {
@@ -291,7 +291,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
         final tickMilliseconds = math.max(1, (tickFactor * magnitude).round());
         final tickCount = (totalMilliseconds / tickMilliseconds).ceil();
         final tickSpacing = tickMilliseconds * scale;
-        final canvasChains = <CommandTimelineCanvasChain>[];
+        final canvasChains = <_CommandTimelineCanvasChain>[];
         for (final row in executorRows) {
           for (final placement in row.placements) {
             final laneTop = row.top + rowPadding + placement.lane * laneHeight;
@@ -307,7 +307,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
                     .inMicroseconds /
                 1000 *
                 scale;
-            final commandGeometries = <CommandTimelineCanvasCommand>[];
+            final commandGeometries = <_CommandTimelineCanvasCommand>[];
             for (final command in placement.chain.commands) {
               final left =
                   command.startTime.difference(globalStart).inMicroseconds /
@@ -318,7 +318,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
                 command.durationAt(now).inMicroseconds / 1000 * scale,
               );
               commandGeometries.add(
-                CommandTimelineCanvasCommand(
+                _CommandTimelineCanvasCommand(
                   chain: placement.chain,
                   command: command,
                   rect: Rect.fromLTWH(left, laneTop + 10, width, 32),
@@ -336,7 +336,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
               }
             }
             canvasChains.add(
-              CommandTimelineCanvasChain(
+              _CommandTimelineCanvasChain(
                 chain: placement.chain,
                 laneTop: laneTop,
                 scheduledLeft: scheduledLeft,
@@ -475,16 +475,16 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
                                     builder: (context, child) {
                                       final segmentTop =
                                           verticalViewportSegment.value *
-                                          commandTimelineViewportSegmentExtent;
+                                          _commandTimelineViewportSegmentExtent;
                                       final visibleTop = math.max<double>(
                                         0,
                                         segmentTop -
-                                            commandTimelineViewportSegmentExtent,
+                                            _commandTimelineViewportSegmentExtent,
                                       );
                                       final visibleBottom =
                                           segmentTop +
                                           labelConstraints.maxHeight +
-                                          commandTimelineViewportSegmentExtent *
+                                          _commandTimelineViewportSegmentExtent *
                                               2;
                                       return Stack(
                                         children: [
@@ -604,11 +604,11 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
                                 builder: (context, child) {
                                   final segmentLeft =
                                       horizontalViewportSegment.value *
-                                      commandTimelineViewportSegmentExtent;
+                                      _commandTimelineViewportSegmentExtent;
                                   final visibleLeft = math.max<double>(
                                     0,
                                     segmentLeft -
-                                        commandTimelineViewportSegmentExtent,
+                                        _commandTimelineViewportSegmentExtent,
                                   );
                                   int firstTick =
                                       ((visibleLeft - 88) / tickSpacing)
@@ -616,7 +616,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
                                   int lastTick =
                                       ((visibleLeft +
                                                   availableTimelineWidth +
-                                                  commandTimelineViewportSegmentExtent *
+                                                  _commandTimelineViewportSegmentExtent *
                                                       2 +
                                                   88) /
                                               tickSpacing)
@@ -702,7 +702,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
                                   ),
                                   Positioned.fill(
                                     right: 12,
-                                    child: CommandTimelineCanvasView(
+                                    child: _CommandTimelineCanvasView(
                                       chains: canvasChains,
                                       rowTops: [
                                         for (final row in executorRows) row.top,
@@ -770,7 +770,7 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
 
         final details = selectedChain == null
             ? null
-            : CommandTimelineDetailsPanel(
+            : _CommandTimelineDetailsPanel(
                 chain: selectedChain,
                 command: selectedCommand,
                 now: now,
@@ -801,30 +801,30 @@ class CommandChainTimelineState extends State<CommandChainTimeline> {
   }
 }
 
-typedef CommandTimelineSelectionCallback =
-    void Function(ChainLogEntry chain, CommandLogEntry? command);
+typedef _CommandTimelineSelectionCallback =
+    void Function(CommandChainReport chain, CommandReport? command);
 
-class CommandTimelineCanvasCommand {
-  final ChainLogEntry chain;
-  final CommandLogEntry command;
+class _CommandTimelineCanvasCommand {
+  final CommandChainReport chain;
+  final CommandReport command;
   final Rect rect;
 
-  const CommandTimelineCanvasCommand({
+  const _CommandTimelineCanvasCommand({
     required this.chain,
     required this.command,
     required this.rect,
   });
 }
 
-class CommandTimelineCanvasChain {
-  final ChainLogEntry chain;
+class _CommandTimelineCanvasChain {
+  final CommandChainReport chain;
   final double laneTop;
   final double scheduledLeft;
   final double startedLeft;
   final Rect bounds;
-  final List<CommandTimelineCanvasCommand> commands;
+  final List<_CommandTimelineCanvasCommand> commands;
 
-  const CommandTimelineCanvasChain({
+  const _CommandTimelineCanvasChain({
     required this.chain,
     required this.laneTop,
     required this.scheduledLeft,
@@ -834,8 +834,8 @@ class CommandTimelineCanvasChain {
   });
 }
 
-class CommandTimelineCanvasView extends StatefulWidget {
-  final List<CommandTimelineCanvasChain> chains;
+class _CommandTimelineCanvasView extends StatefulWidget {
+  final List<_CommandTimelineCanvasChain> chains;
   final List<double> rowTops;
   final List<double> rowHeights;
   final double tickSpacing;
@@ -855,10 +855,9 @@ class CommandTimelineCanvasView extends StatefulWidget {
   final Color hoverCardColor;
   final Color hoverTextColor;
   final CommandChainTimelineLocale locale;
-  final CommandTimelineSelectionCallback onSelected;
+  final _CommandTimelineSelectionCallback onSelected;
 
-  const CommandTimelineCanvasView({
-    super.key,
+  const _CommandTimelineCanvasView({
     required this.chains,
     required this.rowTops,
     required this.rowHeights,
@@ -883,18 +882,19 @@ class CommandTimelineCanvasView extends StatefulWidget {
   });
 
   @override
-  State<CommandTimelineCanvasView> createState() =>
-      CommandTimelineCanvasViewState();
+  State<_CommandTimelineCanvasView> createState() =>
+      _CommandTimelineCanvasViewState();
 }
 
-class CommandTimelineCanvasViewState extends State<CommandTimelineCanvasView> {
-  final ValueNotifier<CommandTimelineCanvasCommand?> hoveredCommand =
+class _CommandTimelineCanvasViewState
+    extends State<_CommandTimelineCanvasView> {
+  final ValueNotifier<_CommandTimelineCanvasCommand?> hoveredCommand =
       ValueNotifier(null);
-  final ValueNotifier<CommandTimelineCanvasChain?> hoveredEmptyChain =
+  final ValueNotifier<_CommandTimelineCanvasChain?> hoveredEmptyChain =
       ValueNotifier(null);
 
   @override
-  void didUpdateWidget(covariant CommandTimelineCanvasView oldWidget) {
+  void didUpdateWidget(covariant _CommandTimelineCanvasView oldWidget) {
     super.didUpdateWidget(oldWidget);
     hoveredCommand.value = null;
     hoveredEmptyChain.value = null;
@@ -947,8 +947,8 @@ class CommandTimelineCanvasViewState extends State<CommandTimelineCanvasView> {
               : 0.0;
           final contentPosition =
               event.localPosition + Offset(horizontalOffset, verticalOffset);
-          CommandTimelineCanvasCommand? commandHit;
-          CommandTimelineCanvasChain? emptyChainHit;
+          _CommandTimelineCanvasCommand? commandHit;
+          _CommandTimelineCanvasChain? emptyChainHit;
           for (final chain in widget.chains.reversed) {
             if (!chain.bounds.inflate(8).contains(contentPosition)) {
               continue;
@@ -1018,7 +1018,7 @@ class CommandTimelineCanvasViewState extends State<CommandTimelineCanvasView> {
               if (!chain.bounds.inflate(8).contains(contentPosition)) {
                 continue;
               }
-              CommandTimelineCanvasCommand? commandHit;
+              _CommandTimelineCanvasCommand? commandHit;
               for (final command in chain.commands.reversed) {
                 if (command.rect.inflate(3).contains(contentPosition)) {
                   commandHit = command;
@@ -1042,7 +1042,7 @@ class CommandTimelineCanvasViewState extends State<CommandTimelineCanvasView> {
             }
           },
           child: CustomPaint(
-            painter: CommandTimelineCommandsPainter(
+            painter: _CommandTimelineCommandsPainter(
               chains: widget.chains,
               rowTops: widget.rowTops,
               rowHeights: widget.rowHeights,
@@ -1074,8 +1074,8 @@ class CommandTimelineCanvasViewState extends State<CommandTimelineCanvasView> {
   }
 }
 
-class CommandTimelineCommandsPainter extends CustomPainter {
-  final List<CommandTimelineCanvasChain> chains;
+class _CommandTimelineCommandsPainter extends CustomPainter {
+  final List<_CommandTimelineCanvasChain> chains;
   final List<double> rowTops;
   final List<double> rowHeights;
   final double tickSpacing;
@@ -1095,10 +1095,10 @@ class CommandTimelineCommandsPainter extends CustomPainter {
   final Color hoverCardColor;
   final Color hoverTextColor;
   final CommandChainTimelineLocale locale;
-  final ValueNotifier<CommandTimelineCanvasCommand?> hoveredCommand;
-  final ValueNotifier<CommandTimelineCanvasChain?> hoveredEmptyChain;
+  final ValueNotifier<_CommandTimelineCanvasCommand?> hoveredCommand;
+  final ValueNotifier<_CommandTimelineCanvasChain?> hoveredEmptyChain;
 
-  CommandTimelineCommandsPainter({
+  _CommandTimelineCommandsPainter({
     required this.chains,
     required this.rowTops,
     required this.rowHeights,
@@ -1408,7 +1408,7 @@ class CommandTimelineCommandsPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CommandTimelineCommandsPainter oldDelegate) {
+  bool shouldRepaint(covariant _CommandTimelineCommandsPainter oldDelegate) {
     return oldDelegate.chains != chains ||
         oldDelegate.rowTops != rowTops ||
         oldDelegate.rowHeights != rowHeights ||
@@ -1430,15 +1430,14 @@ class CommandTimelineCommandsPainter extends CustomPainter {
   }
 }
 
-class CommandTimelineDetailsPanel extends StatelessWidget {
-  final ChainLogEntry chain;
-  final CommandLogEntry? command;
+class _CommandTimelineDetailsPanel extends StatelessWidget {
+  final CommandChainReport chain;
+  final CommandReport? command;
   final DateTime now;
   final CommandChainTimelineLocale locale;
   final VoidCallback onClose;
 
-  const CommandTimelineDetailsPanel({
-    super.key,
+  const _CommandTimelineDetailsPanel({
     required this.chain,
     required this.command,
     required this.now,

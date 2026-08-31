@@ -69,6 +69,10 @@ CommandChainTimeline(snapshot: snapshot);
   подписывается на изменения живого logger. Для обновления передайте новый
   snapshot, например через `setState` или используемый state manager.
 
+Поддерживаемый публичный API состоит только из `CommandChainTimeline` и
+`CommandChainTimelineLocale`. Canvas, painter, state, selection и details panel
+являются деталями реализации.
+
 ## В планах
 
 - Спроектировать отдельное представление и управление для мобильных устройств.
