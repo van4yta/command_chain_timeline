@@ -1,5 +1,7 @@
 # command_chain_timeline
 
+Requires Dart 3.0 and Flutter 3.10 or later.
+
 An interactive Flutter widget for visualizing and analyzing command execution
 timelines from `command_chain_logger` snapshots.
 

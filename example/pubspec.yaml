@@ -6,8 +6,8 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
-  command_chain: ^0.1.0
-  command_chain_logger: ^0.1.0
+  command_chain: ^0.2.0
+  command_chain_logger: ^0.2.0
   command_chain_timeline:
     path: ..
   file_saver: ^0.4.0

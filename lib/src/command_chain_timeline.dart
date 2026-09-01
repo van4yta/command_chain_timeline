@@ -446,9 +446,12 @@ class _CommandChainTimelineState extends State<CommandChainTimeline> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           alignment: Alignment.centerLeft,
                           decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainer,
+                            color: Color.alphaBlend(
+                              Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withAlpha(12),
+                              Theme.of(context).colorScheme.surface,
+                            ),
                             border: Border(
                               right: BorderSide(
                                 color: Theme.of(context).dividerColor,
@@ -519,9 +522,15 @@ class _CommandChainTimelineState extends State<CommandChainTimeline> {
                                                         ? Theme.of(
                                                             context,
                                                           ).colorScheme.surface
-                                                        : Theme.of(context)
-                                                              .colorScheme
-                                                              .surfaceContainerLowest,
+                                                        : Color.alphaBlend(
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .onSurface
+                                                                .withAlpha(6),
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .surface,
+                                                          ),
                                                     border: Border(
                                                       right: BorderSide(
                                                         color: Theme.of(
@@ -629,9 +638,15 @@ class _CommandChainTimelineState extends State<CommandChainTimeline> {
                                     children: [
                                       Positioned.fill(
                                         child: ColoredBox(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainer,
+                                          color: Color.alphaBlend(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withAlpha(12),
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.surface,
+                                          ),
                                         ),
                                       ),
                                       for (
@@ -724,14 +739,17 @@ class _CommandChainTimelineState extends State<CommandChainTimeline> {
                                       evenRowColor: Theme.of(
                                         context,
                                       ).colorScheme.surface,
-                                      oddRowColor: Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceContainerLowest,
+                                      oddRowColor: Color.alphaBlend(
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface.withAlpha(6),
+                                        Theme.of(context).colorScheme.surface,
+                                      ),
                                       dividerColor: Theme.of(
                                         context,
                                       ).dividerColor,
                                       commandOutlineColor: Colors.white
-                                          .withValues(alpha: 0.5),
+                                          .withAlpha(128),
                                       selectedOutlineColor: Theme.of(
                                         context,
                                       ).colorScheme.onSurface,
@@ -1175,7 +1193,7 @@ class _CommandTimelineCommandsPainter extends CustomPainter {
         Paint()..color = dividerColor,
       );
     }
-    final gridPaint = Paint()..color = dividerColor.withValues(alpha: 0.45);
+    final gridPaint = Paint()..color = dividerColor.withAlpha(115);
     int firstTick = (visibleBounds.left / tickSpacing).floor();
     int lastTick = (visibleBounds.right / tickSpacing).ceil();
     if (firstTick < 0) firstTick = 0;
@@ -1450,7 +1468,10 @@ class _CommandTimelineDetailsPanel extends StatelessWidget {
     final failure = command?.failure ?? chain.failure;
     return Material(
       key: const ValueKey('command-timeline-details'),
-      color: Theme.of(context).colorScheme.surfaceContainer,
+      color: Color.alphaBlend(
+        Theme.of(context).colorScheme.onSurface.withAlpha(12),
+        Theme.of(context).colorScheme.surface,
+      ),
       child: Column(
         children: [
           ListTile(
